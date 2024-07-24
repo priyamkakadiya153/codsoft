@@ -1,0 +1,92 @@
+import java.util.Scanner;
+import java.util.Random;
+
+public class NumberGame 
+{
+
+    public static void main(String[] args) 
+  {
+         Scanner sc = new Scanner(System.in);
+         Random random = new Random();
+
+         System.out.println("Welcome to the Unique Number Guessing Game!");
+
+         // Ask for the player's name
+         System.out.print("Enter your name: ");
+         String playerName = sc.nextLine().trim();
+
+         int totalScore = 0;
+         int roundsPlayed = 0;
+         boolean playAgain = true;
+
+        while (playAgain) 
+		{
+                 System.out.println("\nLet's start the game, " + playerName + "!");
+                 int roundScore = playGame(sc, random, playerName);
+                 totalScore += roundScore;
+                 roundsPlayed++;
+
+                 // Ask if the player wants to play again
+                 System.out.print("\nDo you want to play again, " + playerName + "? (yes/no): ");
+                 String playAgainResponse = sc.next().toLowerCase();
+                 playAgain = playAgainResponse.equals("yes") || playAgainResponse.equals("y");
+		}
+
+         // Game over message
+         System.out.println("\nThank you for playing, " + playerName + "!");
+         System.out.println("You played " + roundsPlayed + " rounds.");
+         System.out.println("Your total score based on attempts is: " + totalScore);
+
+         sc.close();
+	}
+
+    public static int playGame(Scanner sc, Random random, String playerName) 
+	{
+         final int lowerBound = 1;
+         final int upperBound = 100;
+         final int maxAttempts = 5;
+
+         // Generate a random secret number
+         int secretNumber = random.nextInt(upperBound) + lowerBound;
+         int attempts = 0;
+
+         System.out.println("\nI'm thinking of a number between " + lowerBound + " and " + upperBound + ".");
+         System.out.println("You have " + maxAttempts + " attempts to guess it.");
+
+         while (attempts < maxAttempts) 
+		{
+            	 attempts++;
+            	 System.out.print("\nEnter your guess (Attempt " + attempts + "): ");
+
+            	 // Validate user input (must be an integer within the specified range)
+           	 while (!sc.hasNextInt()) 
+			{
+                	 System.out.print("Invalid input. Please enter a number: ");
+                	 sc.next(); // consume non-integer input
+			}
+            	int guess = sc.nextInt();
+
+            	// Check if the guess is within the valid range
+            	if (guess < lowerBound || guess > upperBound) 
+			{
+                 	 System.out.println("Guess out of range. Please enter a number between " + lowerBound + " and " + upperBound + ".");
+                 	 continue;
+			}
+
+            	// Provide feedback based on the user's guess
+            	if (guess == secretNumber) 
+			{
+                 	System.out.println("Congratulations, " + playerName + "! You guessed the number " + secretNumber + " correctly in " + attempts + " attempts.");
+                 	return maxAttempts - attempts; // Higher attempts remaining, higher score
+			} else if (guess < secretNumber) {
+                	System.out.println("Too low, " + playerName + ". Try again.");
+			} else {
+                	System.out.println("Too high, " + playerName + ". Try again.");
+			}
+		}
+
+        // Player ran out of attempts
+        System.out.println("Sorry, " + playerName + ", you ran out of attempts. The secret number was " + secretNumber + ".");
+        return 0;
+	}
+}
