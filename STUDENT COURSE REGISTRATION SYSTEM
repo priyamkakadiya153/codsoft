@@ -1,0 +1,186 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+class Course 
+{
+    private final String code;
+    private final String title;
+    private final String description;
+    private final int capacity;
+    private final String schedule;
+    private int availableSlots;
+
+    public Course(String code, String title, String description, int capacity, String schedule) 
+    {
+        this.code = code;
+        this.title = title;
+        this.description = description;
+        this.capacity = capacity;
+        this.schedule = schedule;
+        this.availableSlots = capacity;
+    }
+
+    public String getCode() 
+    {
+        return code;
+    }
+
+    public String getTitle() 
+    {
+        return title;
+    }
+
+    public String getDescription() 
+    {
+        return description;
+    }
+
+    public int getCapacity() 
+    {
+        return capacity;
+    }
+
+    public String getSchedule() 
+    {
+        return schedule;
+    }
+
+    public int getAvailableSlots() 
+    {
+        return availableSlots;
+    }
+
+    public void decrementAvailableSlots() 
+    {
+        availableSlots--;
+    }
+
+    public void incrementAvailableSlots() 
+    {
+        availableSlots++;
+    }
+}
+
+class Student {
+    private final String id;
+    private final String name;
+    private final List<Course> registeredCourses;
+
+    public Student(String id, String name) 
+    {
+        this.id = id;
+        this.name = name;
+        this.registeredCourses = new ArrayList<>();
+    }
+
+    public String getId() 
+    {
+        return id;
+    }
+
+    public String getName() 
+    {
+        return name;
+    }
+
+    public List<Course> getRegisteredCourses() 
+    {
+        return registeredCourses;
+    }
+
+    public void addCourse(Course course) 
+    {
+        registeredCourses.add(course);
+    }
+
+    public void removeCourse(Course course) 
+    {
+        registeredCourses.remove(course);
+    }
+}
+
+public class StudentCourseRegistrationSystem 
+{
+    private final Map<String, Course> courseDatabase;
+    private final Map<String, Student> studentDatabase;
+
+    public StudentCourseRegistrationSystem() 
+    {
+        this.courseDatabase = new HashMap<>();
+        this.studentDatabase = new HashMap<>();
+    }
+
+    public void addCourse(Course course) 
+    {
+        courseDatabase.put(course.getCode(), course);
+    }
+
+    public void addStudent(Student student) 
+    {
+        studentDatabase.put(student.getId(), student);
+    }
+
+    public void displayCourseListing() 
+    {
+        System.out.println("Available Courses:");
+        for (Course course : courseDatabase.values()) 
+        {
+            System.out.println("Code: " + course.getCode() + ", Title: " + course.getTitle() + ", Available Slots: " + course.getAvailableSlots());
+        }
+    }
+
+    public void registerStudentForCourse(String studentId, String courseCode) 
+    {
+        Student student = studentDatabase.get(studentId);
+        Course course = courseDatabase.get(courseCode);
+        if (student != null && course != null && course.getAvailableSlots() > 0) 
+        {
+            student.addCourse(course);
+            course.decrementAvailableSlots();
+            System.out.println("Student " + student.getName() + " registered for course " + course.getTitle());
+        } else {
+            System.out.println("Error: Student or course not found, or course is full.");
+        }
+    }
+
+    public void removeStudentFromCourse(String studentId, String courseCode) 
+    {
+        Student student = studentDatabase.get(studentId);
+        Course course = courseDatabase.get(courseCode);
+        if (student != null && course != null) 
+        {
+            student.removeCourse(course);
+            course.incrementAvailableSlots();
+            System.out.println("Student " + student.getName() + " dropped course " + course.getTitle());
+        } else {
+            System.out.println("Error: Student or course not found.");
+        }
+    }
+
+    public static void main(String[] args) 
+    {
+        StudentCourseRegistrationSystem system = new StudentCourseRegistrationSystem();
+
+        // Add courses
+        system.addCourse(new Course("CS101", "Introduction to Computer Science", "Learn the basics of computer science", 30, "Monday 2pm"));
+        system.addCourse(new Course("MATH102", "Calculus II", "Learn advanced calculus concepts", 25, "Tuesday 3pm"));
+        system.addCourse(new Course("ENGL103", "English Literature", "Explore English literature", 20, "Wednesday 1pm"));
+
+        // Add students
+        system.addStudent(new Student("S101", "John Doe"));
+        system.addStudent(new Student("S102", "Jane Smith"));
+
+        // Display course listing
+        system.displayCourseListing();
+
+        // Register students for courses
+        system.registerStudentForCourse("S101", "CS101");
+        system.registerStudentForCourse("S102", "MATH102");
+        system.registerStudentForCourse("S101", "ENGL103");
+
+        // Remove student from course
+        system.removeStudentFromCourse("S101", "ENGL103");
+    }
+}
