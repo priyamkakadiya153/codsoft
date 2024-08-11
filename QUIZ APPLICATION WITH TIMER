@@ -1,0 +1,100 @@
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+class Question 
+{
+    String question;
+    String[] options;
+    String correctAnswer;
+
+    public Question(String question, String[] options, String correctAnswer) 
+	{
+        this.question = question;
+        this.options = options;
+        this.correctAnswer = correctAnswer;
+    	}
+}
+
+public class QuizApplication 
+{
+    static int correctAnswers = 0;
+    static int incorrectAnswers = 0;
+    static boolean answered = false;
+    static Timer timer;
+
+    public static void main(String[] args) 
+	{
+        Scanner sc = new Scanner(System.in);
+
+        Question[] quiz = 
+		{
+            	new Question("What is the capital of France?", new String[]{"Berlin", "Madrid", "Paris", "Lisbon"}, "Paris"),
+            	new Question("Which planet is known as the Red Planet?", new String[]{"Earth", "Mars", "Jupiter", "Saturn"}, "Mars")
+        	};
+
+        for (Question question : quiz) 
+		{
+            	answered = false;
+           	 askQuestion(question, sc);
+
+            // Wait until the question is answered or time runs out
+            while (!answered) 
+		{
+                try 
+			{
+                    	Thread.sleep(100);
+                } catch (InterruptedException e) 
+				{
+                    		e.printStackTrace();
+                		}
+            		}
+        	}
+
+        // Display final result
+        System.out.println("\nFinal Score:");
+        System.out.println("Correct Answers: " + correctAnswers);
+        System.out.println("Incorrect Answers: " + incorrectAnswers);
+
+    }
+
+    public static void askQuestion(Question question, Scanner sc) 
+	{
+        System.out.println(question.question);
+        for (int i = 0; i < question.options.length; i++) 
+		{
+            System.out.println((i + 1) + ". " + question.options[i]);
+        	}
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() 
+		{
+            @Override
+            public void run() 
+			{
+                if (!answered) 
+				{
+                    		System.out.println("Time's up!");
+                    		incorrectAnswers++;
+                    		answered = true;
+                		}
+            		}
+        	}, 10000); // 10 seconds timer
+
+        String answer = sc.nextLine();
+        timer.cancel();
+
+        if (!answered) 
+	{
+            if (question.options[Integer.parseInt(answer) - 1].equals(question.correctAnswer)) 
+		{
+                System.out.println("Correct!");
+                correctAnswers++;
+            	} else {
+                System.out.println("Incorrect!");
+                incorrectAnswers++;
+            	}
+            answered = true;
+        	}
+    	}
+}
