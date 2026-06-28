@@ -144,5 +144,6 @@ public class ATMInterface
          BankAccount account = new BankAccount(initialBalance);
          ATM atm = new ATM(account);
 	 atm.run();
+	 sc.close();
 	}
 }
