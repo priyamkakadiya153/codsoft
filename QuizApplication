@@ -1,0 +1,187 @@
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.List;
+
+// Class to store question details
+class Question {
+
+    String question;
+    String[] options;
+    int correctOption;
+
+    public Question(String question, String[] options, int correctOption) {
+        this.question = question;
+        this.options = options;
+        this.correctOption = correctOption;
+    }
+}
+
+public class QuizApplication {
+
+    static int correctAnswers = 0;
+    static int incorrectAnswers = 0;
+    static boolean timeUp = false;
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        // Create quiz questions
+        List<Question> quiz = Arrays.asList(
+
+                new Question(
+                        "What is the capital of France?",
+                        new String[] { "Berlin", "Madrid", "Paris", "Lisbon" },
+                        3),
+
+                new Question(
+                        "Which planet is known as the Red Planet?",
+                        new String[] { "Earth", "Mars", "Jupiter", "Saturn" },
+                        2),
+
+                new Question(
+                        "Who developed Java?",
+                        new String[] { "Microsoft", "James Gosling", "Apple", "Oracle" },
+                        2),
+
+                new Question(
+                        "Which keyword is used to inherit a class in Java?",
+                        new String[] { "implements", "extends", "import", "super" },
+                        2),
+
+                new Question(
+                        "Which company developed Java?",
+                        new String[] { "Google", "Sun Microsystems", "IBM", "Microsoft" },
+                        2)
+
+        );
+
+        // Randomize questions
+        Collections.shuffle(quiz);
+
+        System.out.println("==========================================");
+        System.out.println("         JAVA QUIZ APPLICATION");
+        System.out.println("==========================================");
+        System.out.println("You have 10 seconds for each question.");
+        System.out.println();
+
+        int questionNumber = 1;
+
+        for (Question q : quiz) {
+
+            System.out.println("------------------------------------------");
+            System.out.println("Question " + questionNumber + " of " + quiz.size());
+            System.out.println("------------------------------------------");
+
+            System.out.println(q.question);
+
+            for (int i = 0; i < q.options.length; i++) {
+                System.out.println((i + 1) + ". " + q.options[i]);
+            }
+
+            timeUp = false;
+
+            Timer timer = new Timer();
+
+            timer.schedule(new TimerTask() {
+
+                @Override
+                public void run() {
+
+                    if (!timeUp) {
+                        System.out.println("\nTime's Up!");
+                    }
+
+                }
+
+            }, 10000);
+
+            System.out.print("Enter your answer (1-4): ");
+
+            String input = sc.nextLine();
+
+            timer.cancel();
+
+            if (timeUp) {
+                incorrectAnswers++;
+            } else {
+
+                int choice;
+
+                try {
+
+                    choice = Integer.parseInt(input);
+
+                    if (choice < 1 || choice > 4) {
+
+                        System.out.println("Invalid Option!");
+                        incorrectAnswers++;
+
+                    } else if (choice == q.correctOption) {
+
+                        System.out.println("Correct Answer!");
+                        correctAnswers++;
+
+                    } else {
+
+                        System.out.println("Wrong Answer!");
+                        System.out.println("Correct Answer : "
+                                + q.options[q.correctOption - 1]);
+
+                        incorrectAnswers++;
+                    }
+
+                } catch (NumberFormatException e) {
+
+                    System.out.println("Please enter numbers only.");
+                    incorrectAnswers++;
+                }
+            }
+
+            System.out.println();
+            System.out.println("Current Score");
+            System.out.println("Correct Answers   : " + correctAnswers);
+            System.out.println("Incorrect Answers : " + incorrectAnswers);
+            System.out.println();
+
+            questionNumber++;
+        }
+
+        int totalQuestions = quiz.size();
+
+        double percentage = ((double) correctAnswers / totalQuestions) * 100;
+
+        String grade;
+
+        if (percentage >= 90) {
+            grade = "Excellent";
+        } else if (percentage >= 80) {
+            grade = "Very Good";
+        } else if (percentage >= 60) {
+            grade = "Good";
+        } else if (percentage >= 40) {
+            grade = "Average";
+        } else {
+            grade = "Needs Improvement";
+        }
+
+        System.out.println("==========================================");
+        System.out.println("              QUIZ RESULT");
+        System.out.println("==========================================");
+
+        System.out.println("Total Questions   : " + totalQuestions);
+        System.out.println("Correct Answers   : " + correctAnswers);
+        System.out.println("Incorrect Answers : " + incorrectAnswers);
+
+        System.out.printf("Percentage        : %.2f%%\n", percentage);
+
+        System.out.println("Grade             : " + grade);
+
+        System.out.println("==========================================");
+
+        sc.close();
+    }
+}
